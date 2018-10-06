@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <title>DataDrop DB</title>
+    <id>DataDrop DB</id>
+    <version>1.0.0</version>
+    <authors>danielshroff</authors>
+    <owners>danielshroff</owners>
+    <projectUrl>http://github.com/danielandastro/datadrop</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>A minimal database</description>
+    <releaseNotes>First usable release</releaseNotes>
+    <copyright>Copyright 2018</copyright>
+    <tags>database dotnet dotnetcore</tags>
+    <dependencies>
+    </dependencies>
+  </metadata>
+</package>

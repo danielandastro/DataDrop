@@ -31,8 +31,8 @@ namespace DataDrop
         }
         public void Insert(string key, string value)
         {
-            if (!init) { throw new Exception("Datacontroller not initialised, please use DataController.Init()"); return; }
-            stringHolders[key] = "value";
+            if (!init) { throw new Exception("Datacontroller not initialised, please use DataController.Init()"); }
+            stringHolders[key] = value;
             if (persist) { Save(); }
         }
         private static void Save()
@@ -44,30 +44,40 @@ namespace DataDrop
         }
         public void Delete(string key)
         {
+            
             if (!init) { throw new Exception("Datacontroller not initialised, please use DataController.Init()"); }
             stringHolders.Remove(key);
             if (persist) { Save(); }
         }
-        public string Lookup(string key) => stringHolders[key];
+        public string Lookup(string key)
+        {
+            if (!init) { throw new Exception("Datacontroller not initialised, please use DataController.Init()"); }
+            var value = "";
+            stringHolders.TryGetValue(key, out value);
+            return value;
+        }
+
         public bool ValueCheck(string key, string expectedValue)
         {
+            if (!init) { throw new Exception("Datacontroller not initialised, please use DataController.Init()"); }
             var actualValue = "";
             return stringHolders.TryGetValue(key, out actualValue) &&
                                 actualValue.Equals(expectedValue);
         }
         public bool PresenceCheck(string key){
+            if (!init) { throw new Exception("Datacontroller not initialised, please use DataController.Init()"); }
             var value = "";
                 return stringHolders.TryGetValue(key, out value);
         }
         public void RebuildDatabase(){
+            if (!init) { throw new Exception("Datacontroller not initialised, please use DataController.Init()"); }
             File.Delete(fileName);
             Save();
         }
         public void Drop(bool confirm){
-            if (confirm){foreach (KeyValuePair<string, string> kvp in stringHolders)
-                {
-                    stringHolders.Remove(kvp.Key);
-                    File.Delete(fileName);
+            if (!init) { throw new Exception("Datacontroller not initialised, please use DataController.Init()"); }
+            if (confirm){
+                stringHolders.Clear();
                 }}
         }
         }
