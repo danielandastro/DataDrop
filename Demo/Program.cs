@@ -11,14 +11,14 @@ namespace Demo
             var database2 = new DataController();
             database2.Init("test2","", false, false);
             database.Init("test","", false, true);
-            database.Insert("test", "dog");
-            database.Insert("dog", "test");
-            database2.Insert("try", "catch");
-            database.Delete("dog");
-            Console.WriteLine(database.Lookup("test"));
-            Console.WriteLine(database2.Lookup("try"));
-            Console.WriteLine(database.ValueCheck("test", "dog"));
-            Console.WriteLine(database.PresenceCheck("help"));
+            DataController.Insert("test", "dog");
+            DataController.Insert("dog", "test");
+            DataController.Insert("try", "catch");
+            DataController.Delete("dog");
+            Console.WriteLine(DataController.Lookup("test"));
+            Console.WriteLine(DataController.Lookup("try"));
+            Console.WriteLine(DataController.ValueCheck("test", "dog"));
+            Console.WriteLine(DataController.PresenceCheck("help"));
         }
     }
 }

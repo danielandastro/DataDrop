@@ -41,7 +41,7 @@ namespace DataDrop
             init = true;
 
         }
-        public void Insert(string key, string value)
+        public static void Insert(string key, string value)
         {
             if (!init) { throw new Exception("Datacontroller not initialised, please use DataController.Init()"); }
             stringHolders[key] = value;
@@ -65,14 +65,14 @@ namespace DataDrop
                 }
             }
         }
-        public void Delete(string key)
+        public static void Delete(string key)
         {
 
             if (!init) { throw new Exception("Datacontroller not initialised, please use DataController.Init()"); }
             stringHolders.Remove(key);
             if (persist) { Save(); }
         }
-        public string Lookup(string key)
+        public static string Lookup(string key)
         {
             if (!init) { throw new Exception("Datacontroller not initialised, please use DataController.Init()"); }
             var value = "";
@@ -80,14 +80,14 @@ namespace DataDrop
             return value;
         }
 
-        public bool ValueCheck(string key, string expectedValue)
+        public static bool ValueCheck(string key, string expectedValue)
         {
             if (!init) { throw new Exception("Datacontroller not initialised, please use DataController.Init()"); }
             var actualValue = "";
             return stringHolders.TryGetValue(key, out actualValue) &&
                                 actualValue.Equals(expectedValue);
         }
-        public bool PresenceCheck(string key)
+        public static bool PresenceCheck(string key)
         {
             if (!init) { throw new Exception("Datacontroller not initialised, please use DataController.Init()"); }
             var value = "";
