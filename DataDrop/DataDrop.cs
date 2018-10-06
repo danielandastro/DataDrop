@@ -81,6 +81,3 @@ namespace DataDrop
                 }}
         }
         }
-
-    }
-
