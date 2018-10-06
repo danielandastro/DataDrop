@@ -22,11 +22,7 @@
     <option name="FILTER_BY_CURRENT_PROJECT" value="true" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="cbedd11a-2e52-4eb8-b03b-b5faf58625e2" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/DataDrop/DataDrop.cs" beforeDir="false" afterPath="$PROJECT_DIR$/DataDrop/DataDrop.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Demo/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Demo/Program.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UNAMEPASSDEMO/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/UNAMEPASSDEMO/Program.cs" afterDir="false" />
-    </list>
+    <list default="true" id="cbedd11a-2e52-4eb8-b03b-b5faf58625e2" name="Default" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -301,12 +297,12 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1538830071181</updated>
-      <workItem from="1538830076500" duration="1368000" />
+      <workItem from="1538830076500" duration="1968000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="1368000" />
+    <option name="totallyTimeSpent" value="1968000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -319,7 +315,6 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1440" height="877" extended-state="0" />
-    <editor active="true" />
     <layout>
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="right" id="Errors In Solution" />

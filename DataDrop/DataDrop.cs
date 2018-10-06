@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -10,7 +11,7 @@ namespace DataDrop
 
     public class DataController
     {
-        private static Dictionary<string, string> stringHolders = new Dictionary<String, String>();
+        private static ConcurrentDictionary<string, string> stringHolders = new ConcurrentDictionary<string, string>();
         private static bool encryptEnabled, persist, init;
         private static string name, fileName, encryptKey;
         public void Init(string nameInput, String inputKey, bool encryptInput, bool persistInput)
