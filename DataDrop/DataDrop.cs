@@ -107,9 +107,7 @@ namespace DataDrop
                 stringHolders.Clear();
             }
         }
-<<<<<<< HEAD
-        }
-=======
+
         private static string Encrypt(string input)
         {
             byte[] inputArray = UTF8Encoding.UTF8.GetBytes(input);
