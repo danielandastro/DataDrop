@@ -1,4 +1,4 @@
-
+﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataDrop", "DataDrop\DataDrop.csproj", "{F140840C-4138-4CEB-8E16-71ECF461B049}"
@@ -6,6 +6,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo", "Demo\Demo.csproj", "{E357CCFF-194C-4EBB-8A76-FB77600F858A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UNAMEPASSDEMO", "UNAMEPASSDEMO\UNAMEPASSDEMO.csproj", "{F82B5968-2461-4C01-95E1-90351607A301}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataDropCore", "DataDropCore\DataDropCore.csproj", "{96219205-5D55-4637-85D7-A4FCDB237049}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,5 +27,9 @@ Global
 		{F82B5968-2461-4C01-95E1-90351607A301}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F82B5968-2461-4C01-95E1-90351607A301}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F82B5968-2461-4C01-95E1-90351607A301}.Release|Any CPU.Build.0 = Release|Any CPU
+		{96219205-5D55-4637-85D7-A4FCDB237049}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{96219205-5D55-4637-85D7-A4FCDB237049}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{96219205-5D55-4637-85D7-A4FCDB237049}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{96219205-5D55-4637-85D7-A4FCDB237049}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

@@ -2,17 +2,21 @@
 <package >
   <metadata>
     <title>DataDrop DB</title>
-    <id>DataDrop DB</id>
-    <version>1.0.0</version>
+    <id>DataDrop.dll</id>
+    <version>1.0.2</version>
     <authors>danielshroff</authors>
     <owners>danielshroff</owners>
     <projectUrl>http://github.com/danielandastro/datadrop</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>A minimal database</description>
-    <releaseNotes>First usable release</releaseNotes>
+    <releaseNotes>Added and unlocked encryption, as well as performance gains and added core</releaseNotes>
     <copyright>Copyright 2018</copyright>
     <tags>database dotnet dotnetcore</tags>
     <dependencies>
     </dependencies>
   </metadata>
+  <files>
+    <file src="lib\**" target="lib/{framework name}[{version}]" />
+
+</files>
 </package>
