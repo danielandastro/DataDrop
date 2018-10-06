@@ -9,16 +9,16 @@ namespace Demo
         {
             var database = new DataController();
             var database2 = new DataController();
-            database2.Init("test2","", false, false);
+            database2.Init("test2","", false, true);
             database.Init("test","", false, true);
-            DataController.Insert("test", "dog");
-            DataController.Insert("dog", "test");
-            DataController.Insert("try", "catch");
-            DataController.Delete("dog");
-            Console.WriteLine(DataController.Lookup("test"));
-            Console.WriteLine(DataController.Lookup("try"));
-            Console.WriteLine(DataController.ValueCheck("test", "dog"));
-            Console.WriteLine(DataController.PresenceCheck("help"));
+            database.Insert("test", "dog");
+            database2.Insert("dog", "test");
+            database.Insert("try", "catch");
+            
+            Console.WriteLine(database.Lookup("test"));
+            Console.WriteLine(database.Lookup("try"));
+            Console.WriteLine(database.ValueCheck("test", "dog"));
+            Console.WriteLine(database2.PresenceCheck("help"));
         }
     }
 }

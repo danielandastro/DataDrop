@@ -16,7 +16,7 @@ namespace UNAMEPASSDEMO
             var uname = Console.ReadLine();
             Console.WriteLine("Enter Password: ");
             var pass = GetPWDMasked();
-            DataController.Insert(uname, pass);
+            database.Insert(uname, pass);
 
             Console.WriteLine("Now enter them");
             while (true)
@@ -25,7 +25,7 @@ namespace UNAMEPASSDEMO
                 uname = Console.ReadLine();
                 Console.WriteLine("Enter Password: ");
                 pass = GetPWDMasked();
-                if (DataController.ValueCheck(uname, pass))
+                if (database.ValueCheck(uname, pass))
                 {
                     Console.WriteLine("Correct");
                 }

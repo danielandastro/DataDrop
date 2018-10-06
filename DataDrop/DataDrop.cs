@@ -11,9 +11,9 @@ namespace DataDrop
 
     public class DataController
     {
-        private static ConcurrentDictionary<string, string> stringHolders = new ConcurrentDictionary<string, string>();
-        private static bool encryptEnabled, persist, init;
-        private static string name, fileName, encryptKey;
+        private ConcurrentDictionary<string, string> stringHolders = new ConcurrentDictionary<string, string>();
+        private bool encryptEnabled, persist, init;
+        private string name, fileName, encryptKey;
         public void Init(string nameInput, String inputKey, bool encryptInput, bool persistInput)
         {
             name = nameInput;
@@ -42,13 +42,13 @@ namespace DataDrop
             init = true;
 
         }
-        public static void Insert(string key, string value)
+        public void Insert(string key, string value)
         {
             if (!init) { throw new Exception("Datacontroller not initialised, please use DataController.Init()"); }
             stringHolders[key] = value;
             if (persist) { Save(); }
         }
-        private static void Save()
+        private void Save()
         {
             if (encryptEnabled)
             {
@@ -66,14 +66,14 @@ namespace DataDrop
                 }
             }
         }
-        public static void Delete(string key)
+        public void Delete(string key)
         {
 
             if (!init) { throw new Exception("Datacontroller not initialised, please use DataController.Init()"); }
-            stringHolders.Remove(key);
+            stringHolders.TryRemove(key, out var grab);
             if (persist) { Save(); }
         }
-        public static string Lookup(string key)
+        public string Lookup(string key)
         {
             if (!init) { throw new Exception("Datacontroller not initialised, please use DataController.Init()"); }
             var value = "";
@@ -81,14 +81,14 @@ namespace DataDrop
             return value;
         }
 
-        public static bool ValueCheck(string key, string expectedValue)
+        public bool ValueCheck(string key, string expectedValue)
         {
             if (!init) { throw new Exception("Datacontroller not initialised, please use DataController.Init()"); }
             var actualValue = "";
             return stringHolders.TryGetValue(key, out actualValue) &&
                                 actualValue.Equals(expectedValue);
         }
-        public static bool PresenceCheck(string key)
+        public bool PresenceCheck(string key)
         {
             if (!init) { throw new Exception("Datacontroller not initialised, please use DataController.Init()"); }
             var value = "";
@@ -109,7 +109,7 @@ namespace DataDrop
             }
         }
 
-        private static string Encrypt(string input)
+        private string Encrypt(string input)
         {
             byte[] inputArray = UTF8Encoding.UTF8.GetBytes(input);
             TripleDESCryptoServiceProvider tripleDES = new TripleDESCryptoServiceProvider();
@@ -121,7 +121,7 @@ namespace DataDrop
             tripleDES.Clear();
             return Convert.ToBase64String(resultArray, 0, resultArray.Length);
         }
-        public static string Decrypt(string input)  
+        public string Decrypt(string input)  
         {  
             byte[] inputArray = Convert.FromBase64String(input);  
             TripleDESCryptoServiceProvider tripleDES = new TripleDESCryptoServiceProvider();  
