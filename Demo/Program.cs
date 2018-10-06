@@ -9,8 +9,8 @@ namespace Demo
         {
             var database = new DataController();
             var database2 = new DataController();
-            database2.Init("test2", false, false);
-            database.Init("test", false, true);
+            database2.Init("test2","", false, false);
+            database.Init("test","", false, true);
             database.Insert("test", "dog");
             database.Insert("dog", "test");
             database2.Insert("try", "catch");
