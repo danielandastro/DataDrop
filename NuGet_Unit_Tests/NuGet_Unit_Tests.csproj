@@ -32,6 +32,7 @@
     </Reference>
     <Reference Include="DataDrop">
       <HintPath>..\DataDrop\DataDrop DB\DataDrop.dll.1.0.2\lib\{framework name}[{version}]\net47\DataDrop.dll</HintPath>
+      <Private>False</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
