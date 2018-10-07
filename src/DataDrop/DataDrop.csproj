@@ -5,6 +5,12 @@
     <Authors>Daniel Shroff</Authors>
     <PackageProjectUrl>https://github.com/danielandastro/DataDrop</PackageProjectUrl>
     <RepositoryUrl>https://github.com/danielandastro/DataDrop</RepositoryUrl>
+    <PackOnBuild>true</PackOnBuild>
+    <PackageVersion>1.0.4</PackageVersion>
+    <Description>A minimal Key-Value Database solution for DOTNET.</Description>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="NuGet.Build.Packaging" Version="0.2.0" />
+  </ItemGroup>
 </Project>

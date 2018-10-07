@@ -5,17 +5,20 @@ using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace DataDrop
 {
 
     public class DataController
     {
-        public DataController(string nameInput, string inputKey, bool encryptInput, bool persistInput){
+        public DataController(string nameInput, string inputKey, bool encryptInput, bool persistInput, bool threadSafeSaveinput)
+        {
             name = nameInput;
             encryptEnabled = encryptInput;
             persist = persistInput;
             fileName = nameInput + ".dddb";
+            threadSafeSaveinput = threadSafeSave;
             if (encryptInput)
             {
                 encryptKey = inputKey;
@@ -39,15 +42,16 @@ namespace DataDrop
                 }
             }
             init = true;
+            if(threadSafeSave) ThreadSafeSave();
         }
         private ConcurrentDictionary<string, string> stringHolders = new ConcurrentDictionary<string, string>();
-        private bool encryptEnabled, persist, init;
+        private bool encryptEnabled, persist, init, threadSafeSave;
         private string name, fileName, encryptKey;
         public void Insert(string key, string value)
         {
             if (!init) { throw new Exception("Datacontroller not initialised, please use DataController.Init()"); }
             stringHolders[key] = value;
-            if (persist) { Save(); }
+            if (persist && !threadSafeSave) { Save(); }
         }
         private void Save()
         {
@@ -72,7 +76,7 @@ namespace DataDrop
 
             if (!init) { InitException(); }
             stringHolders.TryRemove(key, out var grab);
-            if (persist) { Save(); }
+            if (persist&&!threadSafeSave) { Save(); }
         }
         public string Lookup(string key)
         {
@@ -108,7 +112,7 @@ namespace DataDrop
         {
             if (!init) { InitException(); }
             File.Delete(fileName);
-            Save();
+            if (persist && !threadSafeSave) { Save(); }
         }
         public void Drop(bool confirm)
         {
@@ -132,17 +136,44 @@ namespace DataDrop
             return Convert.ToBase64String(resultArray, 0, resultArray.Length);
         }
 
-        private string Decrypt(string input)  
-        {  
-            var inputArray = Convert.FromBase64String(input);  
-            var tripleDES = new TripleDESCryptoServiceProvider();  
-            tripleDES.Key = UTF8Encoding.UTF8.GetBytes(encryptKey);  
-            tripleDES.Mode = CipherMode.ECB;  
-            tripleDES.Padding = PaddingMode.PKCS7;  
-            var cTransform = tripleDES.CreateDecryptor();  
-            var resultArray = cTransform.TransformFinalBlock(inputArray, 0, inputArray.Length);  
-            tripleDES.Clear();   
-            return UTF8Encoding.UTF8.GetString(resultArray);  
-        }  
+        private string Decrypt(string input)
+        {
+            var inputArray = Convert.FromBase64String(input);
+            var tripleDES = new TripleDESCryptoServiceProvider();
+            tripleDES.Key = UTF8Encoding.UTF8.GetBytes(encryptKey);
+            tripleDES.Mode = CipherMode.ECB;
+            tripleDES.Padding = PaddingMode.PKCS7;
+            var cTransform = tripleDES.CreateDecryptor();
+            var resultArray = cTransform.TransformFinalBlock(inputArray, 0, inputArray.Length);
+            tripleDES.Clear();
+            return UTF8Encoding.UTF8.GetString(resultArray);
+        }
+        async Task ThreadSafeSave()
+        {
+
+            await Task.Run(async () =>
+            {
+                await Task.Delay(1000);
+                while (true)
+                {
+                    System.Threading.Thread.Sleep(10000);
+                    if (encryptEnabled)
+                    {
+                        foreach (KeyValuePair<string, string> kvp in stringHolders)
+                        {
+                            File.WriteAllText(fileName, string.Format("{0}, {1} {2}", kvp.Key, Encrypt(kvp.Value), Environment.NewLine));
+                        }
+                    }
+                    else
+                    {
+                        foreach (var kvp in stringHolders)
+                        {
+                            File.WriteAllText(fileName, string.Format("{0}, {1} {2}", kvp.Key, kvp.Value, Environment.NewLine));
+                        }
+
+                    }
+                }
+            });
+        }
     }
 }
