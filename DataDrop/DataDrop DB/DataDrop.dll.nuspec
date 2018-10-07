@@ -3,13 +3,13 @@
   <metadata>
     <title>DataDrop DB</title>
     <id>DataDrop.dll</id>
-    <version>1.0.2</version>
+    <version>1.0.3</version>
     <authors>danielshroff</authors>
     <owners>danielshroff</owners>
     <projectUrl>http://github.com/danielandastro/datadrop</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>A minimal database</description>
-    <releaseNotes>Added and unlocked encryption, as well as performance gains and added core</releaseNotes>
+    <releaseNotes>changed method names and removed Init</releaseNotes>
     <copyright>Copyright 2018</copyright>
     <tags>database dotnet dotnetcore</tags>
     <dependencies>
