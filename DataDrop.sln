@@ -7,8 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo", "Demo\Demo.csproj", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UNAMEPASSDEMO", "UNAMEPASSDEMO\UNAMEPASSDEMO.csproj", "{F82B5968-2461-4C01-95E1-90351607A301}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataDropCore", "DataDropCore\DataDropCore.csproj", "{96219205-5D55-4637-85D7-A4FCDB237049}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,9 +25,5 @@ Global
 		{F82B5968-2461-4C01-95E1-90351607A301}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F82B5968-2461-4C01-95E1-90351607A301}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F82B5968-2461-4C01-95E1-90351607A301}.Release|Any CPU.Build.0 = Release|Any CPU
-		{96219205-5D55-4637-85D7-A4FCDB237049}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{96219205-5D55-4637-85D7-A4FCDB237049}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{96219205-5D55-4637-85D7-A4FCDB237049}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{96219205-5D55-4637-85D7-A4FCDB237049}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

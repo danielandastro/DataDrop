@@ -5,12 +5,14 @@ using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace DataDrop
 {
 
     public class DataController
     {
+        
         public DataController(string nameInput, string inputKey, bool encryptInput, bool persistInput){
             name = nameInput;
             encryptEnabled = encryptInput;
@@ -38,6 +40,7 @@ namespace DataDrop
                     stringHolders[temp[0]] = temp[1];
                 }
             }
+           ThreadSafeSave();
             init = true;
         }
         private ConcurrentDictionary<string, string> stringHolders = new ConcurrentDictionary<string, string>();
@@ -49,30 +52,30 @@ namespace DataDrop
             stringHolders[key] = value;
             if (persist) { Save(); }
         }
-        private void Save()
-        {
-            if (encryptEnabled)
-            {
-                foreach (KeyValuePair<string, string> kvp in stringHolders)
-                {
-                    File.WriteAllText(fileName, string.Format("{0}, {1} {2}", kvp.Key, Encrypt(kvp.Value), Environment.NewLine));
-                }
-            }
-            else
-            {
+        //private void Save()
+        //{
+        //    if (encryptEnabled)
+        //    {
+        //        foreach (KeyValuePair<string, string> kvp in stringHolders)
+        //        {
+        //            File.WriteAllText(fileName, string.Format("{0}, {1} {2}", kvp.Key, Encrypt(kvp.Value), Environment.NewLine));
+        //        }
+        //    }
+        //    else
+        //    {
 
-                foreach (var kvp in stringHolders)
-                {
-                    File.WriteAllText(fileName, string.Format("{0}, {1} {2}", kvp.Key, kvp.Value, Environment.NewLine));
-                }
-            }
-        }
+        //        foreach (var kvp in stringHolders)
+        //        {
+        //            File.WriteAllText(fileName, string.Format("{0}, {1} {2}", kvp.Key, kvp.Value, Environment.NewLine));
+        //        }
+        //    }
+        //}
         public void Delete(string key)
         {
 
             if (!init) { InitException(); }
             stringHolders.TryRemove(key, out var grab);
-            if (persist) { Save(); }
+            if (persist) {}
         }
         public string Lookup(string key)
         {
@@ -108,7 +111,7 @@ namespace DataDrop
         {
             if (!init) { InitException(); }
             File.Delete(fileName);
-            Save();
+
         }
         public void Drop(bool confirm)
         {
@@ -144,5 +147,37 @@ namespace DataDrop
             tripleDES.Clear();   
             return UTF8Encoding.UTF8.GetString(resultArray);  
         }  
+        async Task ThreadSafeSave()
+        {
+           
+            await Task.Run(async () =>
+            {
+
+                while (true)
+                {
+                    System.Threading.Thread.Sleep(10000);
+                    if (encryptEnabled)
+                    {
+                        foreach (KeyValuePair<string, string> kvp in stringHolders)
+                        {
+                            File.WriteAllText(fileName, string.Format("{0}, {1} {2}", kvp.Key, Encrypt(kvp.Value), Environment.NewLine));
+                        }
+                    }
+                    else
+                    {
+
+                        foreach (var kvp in stringHolders)
+                        {
+                            File.WriteAllText(fileName, string.Format("{0}, {1} {2}", kvp.Key, kvp.Value, Environment.NewLine));
+                        }
+
+                    }
+                }
+
+                    
+                
+            });
+
+        }
     }
 }
