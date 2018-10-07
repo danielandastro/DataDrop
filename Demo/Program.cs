@@ -16,7 +16,7 @@ namespace Demo
             Console.WriteLine(database.Lookup("test"));
             Console.WriteLine(database.Lookup("try"));
             Console.WriteLine(database.ValueCheck("test", "dog"));
-            Console.WriteLine(database2.PresenceCheck("help"));
+            Console.WriteLine(database2.ContainsKey("help"));
         }
     }
 }

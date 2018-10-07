@@ -9,8 +9,7 @@ namespace UNAMEPASSDEMO
         public static void Main(string[] args)
         {
             RC2CryptoServiceProvider rc2CSP = new RC2CryptoServiceProvider();
-            var database = new DataController();
-            database.Init("pssd","sblt-3hn8-sqoy18", true, true);
+            var database = new DataController("pssd","sblt-3hn8-sqoy18", true, true);
             Console.WriteLine("UserName and Password demo");
             Console.WriteLine("Enter User Name: ");
             var uname = Console.ReadLine();

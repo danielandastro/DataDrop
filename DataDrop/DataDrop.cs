@@ -11,7 +11,7 @@ namespace DataDrop
 
     public class DataController
     {
-        public DataController(string nameInput, String inputKey, bool encryptInput, bool persistInput){
+        public DataController(string nameInput, string inputKey, bool encryptInput, bool persistInput){
             name = nameInput;
             encryptEnabled = encryptInput;
             persist = persistInput;
@@ -43,34 +43,6 @@ namespace DataDrop
         private ConcurrentDictionary<string, string> stringHolders = new ConcurrentDictionary<string, string>();
         private bool encryptEnabled, persist, init;
         private string name, fileName, encryptKey;
-        //public void Init(string nameInput, String inputKey, bool encryptInput, bool persistInput)
-        //{
-        //    name = nameInput;
-        //    encryptEnabled = encryptInput;
-        //    persist = persistInput;
-        //    fileName = nameInput + ".dddb";
-        //    if (encryptInput) { encryptKey = inputKey;
-        //        if (File.Exists(fileName))
-        //        {
-        //            var lines = File.ReadLines(fileName);
-        //            foreach (var line in lines)
-        //            {
-        //                var temp = line.Split(',');
-        //                stringHolders[temp[0]] = Decrypt(temp[1]);
-        //            }
-        //        }}
-        //    else if (File.Exists(fileName))
-        //    {
-        //        var lines = File.ReadLines(fileName);
-        //        foreach (var line in lines)
-        //        {
-        //            var temp = line.Split(',');
-        //            stringHolders[temp[0]] = temp[1];
-        //        }
-        //    }
-        //    init = true;
-
-        //}
         public void Insert(string key, string value)
         {
             if (!init) { throw new Exception("Datacontroller not initialised, please use DataController.Init()"); }
@@ -89,7 +61,7 @@ namespace DataDrop
             else
             {
 
-                foreach (KeyValuePair<string, string> kvp in stringHolders)
+                foreach (var kvp in stringHolders)
                 {
                     File.WriteAllText(fileName, string.Format("{0}, {1} {2}", kvp.Key, kvp.Value, Environment.NewLine));
                 }
@@ -98,40 +70,49 @@ namespace DataDrop
         public void Delete(string key)
         {
 
-            if (!init) { throw new Exception("Datacontroller not initialised, please use DataController.Init()"); }
+            if (!init) { InitException(); }
             stringHolders.TryRemove(key, out var grab);
             if (persist) { Save(); }
         }
         public string Lookup(string key)
         {
-            if (!init) { throw new Exception("Datacontroller not initialised, please use DataController.Init()"); }
-            var value = "";
-            stringHolders.TryGetValue(key, out value);
+            if (!init) { InitException(); }
+
+            stringHolders.TryGetValue(key, out var value);
             return value;
         }
 
         public bool ValueCheck(string key, string expectedValue)
         {
-            if (!init) { throw new Exception("Datacontroller not initialised, please use DataController.Init()"); }
-            var actualValue = "";
-            return stringHolders.TryGetValue(key, out actualValue) &&
+            if (!init) { InitException(); }
+
+            return stringHolders.TryGetValue(key, out var actualValue) &&
                                 actualValue.Equals(expectedValue);
         }
-        public bool PresenceCheck(string key)
+        public bool ContainsKey(string key)
         {
-            if (!init) { throw new Exception("Datacontroller not initialised, please use DataController.Init()"); }
-            var value = "";
-            return stringHolders.TryGetValue(key, out value);
+            if (!init)
+            {
+                InitException();
+            }
+
+            return stringHolders.TryGetValue(key, out _);
         }
+
+        private static void InitException()
+        {
+            throw new Exception("Datacontroller not initialised, please use DataController.Init()");
+        }
+
         public void RebuildDatabase()
         {
-            if (!init) { throw new Exception("Datacontroller not initialised, please use DataController.Init()"); }
+            if (!init) { InitException(); }
             File.Delete(fileName);
             Save();
         }
         public void Drop(bool confirm)
         {
-            if (!init) { throw new Exception("Datacontroller not initialised, please use DataController.Init()"); }
+            if (!init) { InitException(); }
             if (confirm)
             {
                 stringHolders.Clear();
@@ -140,25 +121,26 @@ namespace DataDrop
 
         private string Encrypt(string input)
         {
-            byte[] inputArray = UTF8Encoding.UTF8.GetBytes(input);
-            TripleDESCryptoServiceProvider tripleDES = new TripleDESCryptoServiceProvider();
+            var inputArray = UTF8Encoding.UTF8.GetBytes(input);
+            var tripleDES = new TripleDESCryptoServiceProvider();
             tripleDES.Key = UTF8Encoding.UTF8.GetBytes(encryptKey);
             tripleDES.Mode = CipherMode.ECB;
             tripleDES.Padding = PaddingMode.PKCS7;
-            ICryptoTransform cTransform = tripleDES.CreateEncryptor();
-            byte[] resultArray = cTransform.TransformFinalBlock(inputArray, 0, inputArray.Length);
+            var cTransform = tripleDES.CreateEncryptor();
+            var resultArray = cTransform.TransformFinalBlock(inputArray, 0, inputArray.Length);
             tripleDES.Clear();
             return Convert.ToBase64String(resultArray, 0, resultArray.Length);
         }
-        public string Decrypt(string input)  
+
+        private string Decrypt(string input)  
         {  
-            byte[] inputArray = Convert.FromBase64String(input);  
-            TripleDESCryptoServiceProvider tripleDES = new TripleDESCryptoServiceProvider();  
+            var inputArray = Convert.FromBase64String(input);  
+            var tripleDES = new TripleDESCryptoServiceProvider();  
             tripleDES.Key = UTF8Encoding.UTF8.GetBytes(encryptKey);  
             tripleDES.Mode = CipherMode.ECB;  
             tripleDES.Padding = PaddingMode.PKCS7;  
-            ICryptoTransform cTransform = tripleDES.CreateDecryptor();  
-            byte[] resultArray = cTransform.TransformFinalBlock(inputArray, 0, inputArray.Length);  
+            var cTransform = tripleDES.CreateDecryptor();  
+            var resultArray = cTransform.TransformFinalBlock(inputArray, 0, inputArray.Length);  
             tripleDES.Clear();   
             return UTF8Encoding.UTF8.GetString(resultArray);  
         }  
