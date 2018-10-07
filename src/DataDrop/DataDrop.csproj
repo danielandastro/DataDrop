@@ -8,6 +8,13 @@
     <PackOnBuild>true</PackOnBuild>
     <PackageVersion>1.0.4</PackageVersion>
     <Description>A minimal Key-Value Database solution for DOTNET.</Description>
+    <PackageId>DataDrop</PackageId>
+    <NeutralLanguage>en-GB</NeutralLanguage>
+    <PackageLicenseUrl>https://raw.githubusercontent.com/danielandastro/DataDrop/master/LICENSE</PackageLicenseUrl>
+    <Owners>Daniel Shroff</Owners>
+    <Summary>A minimal Key-Value Database</Summary>
+    <PackageTags>database, dotnetcore</PackageTags>
+    <Title>DataDrop DB</Title>
   </PropertyGroup>
 
   <ItemGroup>

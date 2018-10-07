@@ -9,4 +9,7 @@
     <ProjectReference Include="..\..\src\DataDrop\DataDrop.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="pssd.dddb" />
+  </ItemGroup>
 </Project>

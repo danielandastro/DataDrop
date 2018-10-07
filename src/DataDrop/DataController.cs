@@ -12,6 +12,21 @@ namespace DataDrop
 
     public class DataController
     {
+        private void dupeRemove()
+        {
+
+List<string> emailAddresses = new List<string>();  
+            using (StringReader reader = new StringReader(File.ReadAllText(fileName)))  
+{  
+    string line = null;  
+    while ((line = reader.ReadLine()) != null)  
+        if (!emailAddresses.Contains(line))  
+            emailAddresses.Add(line);  
+}  
+            using (StreamWriter writer = new StreamWriter(File.Open(@fileName, FileMode.Create)))  
+    foreach (string value in emailAddresses)  
+        writer.WriteLine(value); 
+        }
         public DataController(string nameInput, string inputKey, bool encryptInput, bool persistInput, bool threadSafeSaveinput)
         {
             name = nameInput;
@@ -19,6 +34,7 @@ namespace DataDrop
             persist = persistInput;
             fileName = nameInput + ".dddb";
             threadSafeSaveinput = threadSafeSave;
+            dupeRemove();
             if (encryptInput)
             {
                 encryptKey = inputKey;
@@ -55,11 +71,12 @@ namespace DataDrop
         }
         private void Save()
         {
+            dupeRemove();
             if (encryptEnabled)
             {
                 foreach (KeyValuePair<string, string> kvp in stringHolders)
                 {
-                    File.WriteAllText(fileName, string.Format("{0}, {1} {2}", kvp.Key, Encrypt(kvp.Value), Environment.NewLine));
+                    File.AppendAllText(fileName, string.Format("{0}, {1} {2}", kvp.Key, Encrypt(kvp.Value), Environment.NewLine));
                 }
             }
             else
@@ -90,8 +107,7 @@ namespace DataDrop
         {
             if (!init) { InitException(); }
 
-            return stringHolders.TryGetValue(key, out var actualValue) &&
-                                actualValue.Equals(expectedValue);
+            return ContainsKey(key) && string.Equals(stringHolders[key], expectedValue);
         }
         public bool ContainsKey(string key)
         {
@@ -156,19 +172,20 @@ namespace DataDrop
                 await Task.Delay(1000);
                 while (true)
                 {
+                    dupeRemove();
                     System.Threading.Thread.Sleep(10000);
                     if (encryptEnabled)
                     {
                         foreach (KeyValuePair<string, string> kvp in stringHolders)
                         {
-                            File.WriteAllText(fileName, string.Format("{0}, {1} {2}", kvp.Key, Encrypt(kvp.Value), Environment.NewLine));
+                            File.AppendAllText(fileName, string.Format("{0}, {1} {2}", kvp.Key, Encrypt(kvp.Value), Environment.NewLine));
                         }
                     }
                     else
                     {
                         foreach (var kvp in stringHolders)
                         {
-                            File.WriteAllText(fileName, string.Format("{0}, {1} {2}", kvp.Key, kvp.Value, Environment.NewLine));
+                            File.AppendAllText(fileName, string.Format("{0}, {1} {2}", kvp.Key, kvp.Value, Environment.NewLine));
                         }
 
                     }
