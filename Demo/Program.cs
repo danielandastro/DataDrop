@@ -7,10 +7,8 @@ namespace Demo
     {
         public static void Main(string[] args)
         {
-            var database = new DataController();
-            var database2 = new DataController();
-            database2.Init("test2","", false, true);
-            database.Init("test","", false, true);
+            var database = new DataController("test", "", false, true);
+            var database2 = new DataController("test2", "", false, true);
             database.Insert("test", "dog");
             database2.Insert("dog", "test");
             database.Insert("try", "catch");

@@ -11,16 +11,14 @@ namespace DataDrop
 
     public class DataController
     {
-        private ConcurrentDictionary<string, string> stringHolders = new ConcurrentDictionary<string, string>();
-        private bool encryptEnabled, persist, init;
-        private string name, fileName, encryptKey;
-        public void Init(string nameInput, String inputKey, bool encryptInput, bool persistInput)
-        {
+        public DataController(string nameInput, String inputKey, bool encryptInput, bool persistInput){
             name = nameInput;
             encryptEnabled = encryptInput;
             persist = persistInput;
             fileName = nameInput + ".dddb";
-            if (encryptInput) { encryptKey = inputKey;
+            if (encryptInput)
+            {
+                encryptKey = inputKey;
                 if (File.Exists(fileName))
                 {
                     var lines = File.ReadLines(fileName);
@@ -29,7 +27,8 @@ namespace DataDrop
                         var temp = line.Split(',');
                         stringHolders[temp[0]] = Decrypt(temp[1]);
                     }
-                }}
+                }
+            }
             else if (File.Exists(fileName))
             {
                 var lines = File.ReadLines(fileName);
@@ -40,8 +39,38 @@ namespace DataDrop
                 }
             }
             init = true;
-
         }
+        private ConcurrentDictionary<string, string> stringHolders = new ConcurrentDictionary<string, string>();
+        private bool encryptEnabled, persist, init;
+        private string name, fileName, encryptKey;
+        //public void Init(string nameInput, String inputKey, bool encryptInput, bool persistInput)
+        //{
+        //    name = nameInput;
+        //    encryptEnabled = encryptInput;
+        //    persist = persistInput;
+        //    fileName = nameInput + ".dddb";
+        //    if (encryptInput) { encryptKey = inputKey;
+        //        if (File.Exists(fileName))
+        //        {
+        //            var lines = File.ReadLines(fileName);
+        //            foreach (var line in lines)
+        //            {
+        //                var temp = line.Split(',');
+        //                stringHolders[temp[0]] = Decrypt(temp[1]);
+        //            }
+        //        }}
+        //    else if (File.Exists(fileName))
+        //    {
+        //        var lines = File.ReadLines(fileName);
+        //        foreach (var line in lines)
+        //        {
+        //            var temp = line.Split(',');
+        //            stringHolders[temp[0]] = temp[1];
+        //        }
+        //    }
+        //    init = true;
+
+        //}
         public void Insert(string key, string value)
         {
             if (!init) { throw new Exception("Datacontroller not initialised, please use DataController.Init()"); }
