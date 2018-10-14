@@ -1,196 +1,213 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
+using DataDrop.Interfaces;
 
 namespace DataDrop
 {
-
+    /// <summary>
+    /// Class to create a key/value pair store in the form of either instance based or file.
+    /// </summary>
     public class DataController
     {
-        private void dupeRemove()
-        {
+        /// <summary>
+        /// The settings to use for the store.
+        /// </summary>
+        protected readonly IDataControllerSettings Settings;
+        
+        /// <summary>
+        /// The internal dictionary for the key/value pair.
+        /// </summary>
+        protected IDictionary<string, string> DataStore { get; set; }
 
-List<string> emailAddresses = new List<string>();  
-            using (StringReader reader = new StringReader(File.ReadAllText(fileName)))  
-{  
-    string line = null;  
-    while ((line = reader.ReadLine()) != null)  
-        if (!emailAddresses.Contains(line))  
-            emailAddresses.Add(line);  
-}  
-            using (StreamWriter writer = new StreamWriter(File.Open(@fileName, FileMode.Create)))  
-    foreach (string value in emailAddresses)  
-        writer.WriteLine(value); 
+        /// <summary>
+        /// Default constructor that will initialize with the default settings.
+        /// </summary>
+        public DataController() : this(new DefaultDataControllerSettings()) {
+            
         }
-        public DataController(string nameInput, string inputKey, bool encryptInput, bool persistInput, bool threadSafeSaveinput)
-        {
-            name = nameInput;
-            encryptEnabled = encryptInput;
-            persist = persistInput;
-            fileName = nameInput + ".dddb";
-            threadSafeSaveinput = threadSafeSave;
-            dupeRemove();
-            if (encryptInput)
-            {
-                encryptKey = inputKey;
-                if (File.Exists(fileName))
-                {
-                    var lines = File.ReadLines(fileName);
-                    foreach (var line in lines)
-                    {
-                        var temp = line.Split(',');
-                        stringHolders[temp[0]] = Decrypt(temp[1]);
-                    }
-                }
-            }
-            else if (File.Exists(fileName))
-            {
-                var lines = File.ReadLines(fileName);
-                foreach (var line in lines)
-                {
-                    var temp = line.Split(',');
-                    stringHolders[temp[0]] = temp[1];
-                }
-            }
-            init = true;
-            if(threadSafeSave) ThreadSafeSave();
-        }
-        private ConcurrentDictionary<string, string> stringHolders = new ConcurrentDictionary<string, string>();
-        private bool encryptEnabled, persist, init, threadSafeSave;
-        private string name, fileName, encryptKey;
-        public void Insert(string key, string value)
-        {
-            if (!init) { throw new Exception("Datacontroller not initialised, please use DataController.Init()"); }
-            stringHolders[key] = value;
-            if (persist && !threadSafeSave) { Save(); }
-        }
-        private void Save()
-        {
-            dupeRemove();
-            if (encryptEnabled)
-            {
-                foreach (KeyValuePair<string, string> kvp in stringHolders)
-                {
-                    File.AppendAllText(fileName, string.Format("{0}, {1} {2}", kvp.Key, Encrypt(kvp.Value), Environment.NewLine));
-                }
-            }
-            else
-            {
 
-                foreach (var kvp in stringHolders)
-                {
-                    File.WriteAllText(fileName, string.Format("{0}, {1} {2}", kvp.Key, kvp.Value, Environment.NewLine));
-                }
-            }
+        /// <summary>
+        /// Constructor that takes in custom settings to utilize for the data store.
+        /// </summary>
+        /// <param name="settings">The settings to use for the data store.</param>
+        public DataController(IDataControllerSettings settings) {
+            Settings = settings;
+            Load();
         }
-        public void Delete(string key)
-        {
-
-            if (!init) { InitException(); }
-            stringHolders.TryRemove(key, out var grab);
-            if (persist&&!threadSafeSave) { Save(); }
+        
+        /// <summary>
+        /// Upserts a key/value pair.
+        /// </summary>
+        /// <param name="key">The key to update or insert.</param>
+        /// <param name="value">The value associated with the key.</param>
+        public void Insert(string key, string value) {
+            DataStore[key] = value;
+            Save();
         }
-        public string Lookup(string key)
-        {
-            if (!init) { InitException(); }
-
-            stringHolders.TryGetValue(key, out var value);
+        
+        /// <summary>
+        /// Removes a key/value pair from the store.
+        /// </summary>
+        /// <param name="key"></param>
+        public void Delete(string key) {
+            DataStore.Remove(key);
+            Save();
+        }
+        
+        /// <summary>
+        /// Attempts to get a value out of the store by key. If it doesn't exist it returns null.
+        /// </summary>
+        /// <param name="key">The key associated to a specific value.</param>
+        /// <returns>The value associated with the key that was passed in.</returns>
+        public string Lookup(string key) {
+            DataStore.TryGetValue(key, out var value);
             return value;
         }
 
-        public bool ValueCheck(string key, string expectedValue)
-        {
-            if (!init) { InitException(); }
-
-            return ContainsKey(key) && string.Equals(stringHolders[key], expectedValue);
+        /// <summary>
+        /// Boolean check to see if a value is what it is expected to be.
+        /// </summary>
+        /// <param name="key">The key to the value that's being checked.</param>
+        /// <param name="expectedValue">The expected value.</param>
+        /// <param name="valueComparer">The type of string comparison to use. [Default is InvariantCulture]</param>
+        /// <returns>A boolean value.</returns>
+        public bool IsValueEqual(string key, string expectedValue, StringComparison valueComparer = StringComparison.InvariantCulture) {
+            DataStore.TryGetValue(key, out var value);
+            return expectedValue.Equals(value, valueComparer);
         }
-        public bool ContainsKey(string key)
-        {
-            if (!init)
-            {
-                InitException();
+
+        /// <summary>
+        /// A lookup to see if the store contains a specific key.
+        /// </summary>
+        /// <param name="key">The value to verify existence of.</param>
+        /// <returns>A boolean value.</returns>
+        public bool ContainsKey(string key) {
+            return DataStore.ContainsKey(key);
+        }
+
+        /// <summary>
+        /// A lookup to see if a specific key/value pair exists.
+        /// </summary>
+        /// <param name="key">The key to validate.</param>
+        /// <param name="value">The value to validate.</param>
+        /// <param name="valueComparer">The type of string comparison to use. [Default is InvariantCulture]</param>
+        /// <returns>A boolean value.</returns>
+        public bool ContainsPair(string key, string value, StringComparison valueComparer = StringComparison.InvariantCulture) {
+            return DataStore.ContainsKey(key) && DataStore[key].Equals(value, valueComparer);
+        }
+
+        /// <summary>
+        /// Used to rebuild the store.
+        /// </summary>
+        /// <remarks>Probably unnecessary.</remarks>
+        public void RebuildStore() {
+            File.Delete(Settings.FileName);
+            Save();
+        }
+
+        /// <summary>
+        /// Used to clear the current store.
+        /// </summary>
+        public void ClearCurrentStore() {
+            DataStore.Clear();
+            File.Delete(Settings.FileName);
+        }
+
+        /// <summary>
+        /// Used to load the data from the file into the data store dictionary.
+        /// </summary>
+        protected virtual void Load() {
+            Action<Func<string, string>> createDataStoreFactory = process => {
+                                             DataStore = (from line in File.ReadLines(Settings.FileName)
+                                              let pair = line.Split(Settings.KeyValuePairDelimiter)
+                                              select new {Key = pair.First(), Value = process(pair.Last())})
+                                                 .ToDictionary(k => k.Key, v => v.Value);
+                                         };
+            if (File.Exists(Settings.FileName)) {
+                if (Settings.EnableEncryption) {
+                    createDataStoreFactory(Decrypt);
+                }
+                else {
+                    createDataStoreFactory(value => value);
+                }
             }
-
-            return stringHolders.TryGetValue(key, out _);
-        }
-
-        private static void InitException()
-        {
-            throw new Exception("Datacontroller not initialised, please use DataController.Init()");
-        }
-
-        public void RebuildDatabase()
-        {
-            if (!init) { InitException(); }
-            File.Delete(fileName);
-            if (persist && !threadSafeSave) { Save(); }
-        }
-        public void Drop(bool confirm)
-        {
-            if (!init) { InitException(); }
-            if (confirm)
-            {
-                stringHolders.Clear();
+            else {
+                DataStore = new Dictionary<string, string>();
             }
         }
 
-        private string Encrypt(string input)
-        {
-            var inputArray = UTF8Encoding.UTF8.GetBytes(input);
-            var tripleDES = new TripleDESCryptoServiceProvider();
-            tripleDES.Key = UTF8Encoding.UTF8.GetBytes(encryptKey);
-            tripleDES.Mode = CipherMode.ECB;
-            tripleDES.Padding = PaddingMode.PKCS7;
-            var cTransform = tripleDES.CreateEncryptor();
-            var resultArray = cTransform.TransformFinalBlock(inputArray, 0, inputArray.Length);
-            tripleDES.Clear();
+        /// <summary>
+        /// Provides a way to decrypt values in a pair if encryption is enabled.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns>The unencrypted value.</returns>
+        protected string Decrypt(string input) {
+            var inputArray = Convert.FromBase64String(input);
+            var resultArray = Settings.EncryptionProvider.TransformFinalBlock(inputArray, 0, inputArray.Length);
+            return Encoding.UTF8.GetString(resultArray);
+        }
+
+        private void Save() {
+            if (!Settings.PersistStore) return;
+            Action<Func<string, string>, IDictionary<string, string>> writeFileFactory =
+                (process, store) => {
+                    var storeSet = store
+                        .Select(pair => $"{pair.Key}{Settings.KeyValuePairDelimiter}{process(pair.Value)}");
+                    File.WriteAllText(Settings.FileName, string.Join(Environment.NewLine, storeSet));
+                };
+            if (Settings.EnableEncryption) {
+                writeFileFactory(Encrypt, DataStore);
+            }
+            else {
+                writeFileFactory(v => v, DataStore);
+            }
+        }
+
+        private string Encrypt(string input) {
+            var inputArray = Encoding.UTF8.GetBytes(input);
+            var resultArray = Settings.EncryptionProvider.TransformFinalBlock(inputArray, 0, inputArray.Length);
             return Convert.ToBase64String(resultArray, 0, resultArray.Length);
         }
+    }
 
-        private string Decrypt(string input)
-        {
-            var inputArray = Convert.FromBase64String(input);
-            var tripleDES = new TripleDESCryptoServiceProvider();
-            tripleDES.Key = UTF8Encoding.UTF8.GetBytes(encryptKey);
-            tripleDES.Mode = CipherMode.ECB;
-            tripleDES.Padding = PaddingMode.PKCS7;
-            var cTransform = tripleDES.CreateDecryptor();
-            var resultArray = cTransform.TransformFinalBlock(inputArray, 0, inputArray.Length);
-            tripleDES.Clear();
-            return UTF8Encoding.UTF8.GetString(resultArray);
+    /// <inheritdoc />
+    /// <typeparam name="TStore">Any implementation of IDictionary{string, string}.</typeparam>
+    public sealed class DataController<TStore> : DataController where TStore : class, IDictionary<string, string>
+    {
+        private new TStore DataStore { get; set; }
+
+        /// <inheritdoc />
+        public DataController() : this(new DefaultDataControllerSettings()) {
+            
         }
-        async Task ThreadSafeSave()
-        {
 
-            await Task.Run(async () =>
-            {
-                await Task.Delay(1000);
-                while (true)
-                {
-                    dupeRemove();
-                    System.Threading.Thread.Sleep(10000);
-                    if (encryptEnabled)
-                    {
-                        foreach (KeyValuePair<string, string> kvp in stringHolders)
-                        {
-                            File.AppendAllText(fileName, string.Format("{0}, {1} {2}", kvp.Key, Encrypt(kvp.Value), Environment.NewLine));
-                        }
-                    }
-                    else
-                    {
-                        foreach (var kvp in stringHolders)
-                        {
-                            File.AppendAllText(fileName, string.Format("{0}, {1} {2}", kvp.Key, kvp.Value, Environment.NewLine));
-                        }
+        /// <inheritdoc />
+        public DataController(IDataControllerSettings settings) : base(settings) {
+            
+        }
 
-                    }
+        /// <inheritdoc />
+        protected override void Load() {
+            Action<Func<string, string>> createDataStoreFactory = process => {
+                                                                      DataStore = (from line in File.ReadLines(Settings.FileName)
+                                                                                   let pair = line.Split(',')
+                                                                                   select new {Key = pair.First(), Value = process(pair.Last())})
+                                                                          .ToDictionary(k => k.Key, v => v.Value) as TStore;
+                                                                  };
+            if (File.Exists(Settings.FileName)) {
+                if (Settings.EnableEncryption) {
+                    createDataStoreFactory(Decrypt);
                 }
-            });
+                else {
+                    createDataStoreFactory(value => value);
+                }
+            }
+            else {
+                DataStore = Activator.CreateInstance<TStore>();
+            }
         }
     }
 }
